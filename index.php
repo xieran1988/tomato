@@ -64,7 +64,7 @@ require_once("data.php");
 		.nav {
 			margin:0 auto;
 			height: 40px;
-			width: 900px;
+			width: 500px;
 		}
 		.nav span {
 			float: right;
@@ -82,8 +82,19 @@ require_once("data.php");
 		}
 		.tip_div h6 {
 			margin: 0;
+			margin-top: 10px;
 			font-size: 13px;
 			font-weight: normal;
+		}
+		.tip_div h2 {
+			margin: 0;
+			font-size: 15px;
+			font-weight: normal;
+		}
+		.tip_top {
+			margin:0 auto;
+			width: 400px;
+			font-size: 25px;
 		}
 
 	</style>
@@ -92,6 +103,7 @@ require_once("data.php");
 </head>
 
 <body>
+
 	<div id=tip1 class=tip_div>
 		<h1> 在这里新建一个任务 -></h1>
 		<h6><a href=# class=tip_div_close>我知道了</a></h6>
@@ -100,6 +112,17 @@ require_once("data.php");
 		<h1> <- 点击按钮记录相应的符号 </h1>
 		<h6><a href=# class=tip_div_close>我知道了</a></h6>
 	</div>
+	<div id=tip3 class=tip_div>
+		<h1> 注意：</h1>
+		<h2>记录添加以后无法更改</h2>
+		<h2>可以查看，但无法更改昨天的记录</h2>
+		<h6><a href=# class=tip_div_close>开始使用</a></h6>
+	</div>
+
+	<div class=tip_top>
+		欢迎第一次使用 ManyTomato ！
+	</div>
+
 	<div class=nav>
 		<span><a href="data.php?exit=1">退出登陆</a></span>
 	</div>

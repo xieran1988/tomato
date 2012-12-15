@@ -132,12 +132,38 @@ function move_tip_div(div, pos, ele) {
 	tip.animate({ height: 'show', opacity: 'show' }, 'slow');
 }
 
+var tip_stat = 'tip1';
+
+function tip_div_close_click() {
+	var div = $(this).closest('div');
+	switch (tip_stat) {
+	case 'tip1':
+		div.hide();
+		tip_stat = 'tip2';
+		move_tip_div('#tip2', 'right', '.todo_table tr:eq(1)');
+		break;
+	case 'tip2':
+		div.hide();
+		tip_stat = 'tip3';
+		move_tip_div('#tip3', 'right', '.todo_table tr:eq(1)');
+		break;
+	case 'tip3':
+		div.hide();
+		$('.tip_top').hide('slow');
+		$('.nav').show();
+		tip_stat = 'tip_done';
+		todo_update([]);
+		break;
+	}
+}
+
 $(document).ready(function() {
 	todo_update([
 		{'title':'Task 1', 'str':'*,-'},
 	]);
+	$('.nav').hide();
 	move_tip_div('#tip1', 'left', '#todo_blank');
-	move_tip_div('#tip2', 'right', '.todo_table tr:eq(1)');
+	$('.tip_div_close').click(tip_div_close_click);
 //	todo_update([
 //		{'title':'Task 1', 'str':'***---'},
 //		{'title':'Task 2', 'str':'***-*-'},
