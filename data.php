@@ -1,12 +1,5 @@
 <?
 
-/*
-$conn = new PDO("mysql:host=localhost;dbname=tomato", "yjwt", "52550501");
-var_dump($conn);
-$stmt = $db->prepare("insert into user(email, pass) values (?,?)"); 
-$stmt->execute("enlist@qq.com", "ha");
- */
-
 require_once("lib.php");
 
 $email = $_COOKIE[email];
@@ -20,20 +13,16 @@ mysql_query("use tomato");
 if ($_GET[postdata]) {
 	$p = file_get_contents("php://input");
 	$date = date('Y-m-d');
-	$r = mysql_query("select * from entry where email = '$email' and time = '$date'");
-	$r = mysql_fetch_assoc($r);
-	if (!$r) {
-		mysql_query("insert into entry(email, val, time) values('$email', '$p', '$date')");
-	} else {
-		mysql_query("update entry set val =  '$p' where email = '$email' and time = '$date'");
-	}
-#	echo "done $p $r $date".mysql_error();
+	$r = mysql_query("insert into entry(email, time, val) values('$email', '$date', '$p') ".
+									 "on duplicate key update val = '$p'");
+	syslog("tomato_postdata: $p result: $r");
 }
 
 if ($_GET[getdata]) {
 	$date = date('Y-m-d');
 	$r = mysql_query("select * from entry where email = '$email' and time = '$date'");
 	$r = mysql_fetch_assoc($r);
+	syslog("tomato_getdata: $r");
 	echo "$r[val]";
 }
 
@@ -41,7 +30,7 @@ $email = $_POST[email];
 $pass = $_POST[pass];
 
 if ($_GET[reg]) {
-	$r = mysql_query("select * from user email = '$email'");
+	$r = mysql_query("select * from user where email = '$email'");
 	$r = mysql_fetch_assoc($r);
 	if (!$r) {
 		mysql_query("insert into user(email, pass) values('$email', '$pass')");
@@ -50,6 +39,7 @@ if ($_GET[reg]) {
 	} else {
 		jmp("login.php?email_used=1");
 	}
+	error_log("tomato_reg: $email");
 }
 
 if ($_GET[login]) {
@@ -61,6 +51,11 @@ if ($_GET[login]) {
 	} else {
 		jmp("login.php?login_failed=1");
 	}
+}
+
+if ($_GET["exit"]) {
+	setcookie('email', '');
+	jmp("login.php");
 }
 
 ?>

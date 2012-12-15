@@ -1,4 +1,54 @@
 
+$.urlParam = function(name){
+	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if (!results) { return 0; }
+	return results[1] || 0;
+}
+
+function table_update(j, entry, blank, entry_set) {
+	var e = $(entry);
+	if (e.length >= j.length) {
+		for (var i = j.length; i < e.length; i++) {
+			$(e[i]).remove();
+		}
+	}
+	if (e.length < j.length) {
+		for (var i = e.length; i < j.length; i++) {
+			var ne = entry_set(j[i]);
+			ne.insertBefore($(blank));
+		}
+	}
+	e = $(entry);
+	for (var i = 0; i < j.length; i++) {
+		var ne = entry_set(j[i]);
+		$(e[i]).replaceWith(entry_set(j[i]));
+	}
+}
+
+function get_all_entries(entry, entry_get) {
+	return $.map($(entry), function(e) {
+		return entry_get(e);
+	});
+}
+
+function post_alldata() {
+	var data = {
+		'todo' : get_all_entries('.todo_entry', todo_entry_get), 
+		'outplan' : get_all_entries('.outplan_entry', outplan_entry_get),
+	 	'alist' : get_all_entries('.alist_entry', alist_entry_get)
+	};
+	console.log(data);
+	$.post("data.php?postdata=1", JSON.stringify(data), function (e) {
+//		console.log('ok', e);
+	});
+}
+
+function get_alldata(func) {
+	$.get('data.php?getdata=1', function(data) {
+		func(data);
+	});
+}
+
 function todo_entry_set(j) {
 	var title = j.title;
 	var str = j.str;
@@ -30,31 +80,15 @@ function todo_entry_get(o) {
 	return {'title':title, 'str':str};
 }
 
-function table_update(j, entry, blank, entry_set) {
-	var e = $(entry);
-	if (e.length >= j.length) {
-		for (var i = j.length; i < e.length; i++) {
-			$(e[i]).remove();
-		}
-	}
-	if (e.length < j.length) {
-		for (var i = e.length; i < j.length; i++) {
-			var ne = entry_set(j[i]);
-			ne.insertBefore($(blank));
-		}
-	}
-	e = $(entry);
-	for (var i = 0; i < j.length; i++) {
-		var ne = entry_set(j[i]);
-		$(e[i]).replaceWith(entry_set(j[i]));
-	}
-}
-
 function todo_str_btn_click() {
 	var ch = $(this).html();
 	var span = $('<span class=todo_ch>').html(ch);
 	var l = $(this).parent().parent().find('.todo_str_left');
+	var tr = $(this).closest('tr');
+	var str = tr.attr('str');
+	tr.attr('str', str + ch);
 	l.append(span);
+	post_alldata();
 }
 
 function todo_update(j) {
@@ -95,6 +129,15 @@ function alist_update(j) {
 	table_update(j, '.alist_entry', '#alist_blank', alist_entry_set);
 }
 
+function update_alldata(data) {
+	try {
+		j = jQuery.parseJSON(data);
+		todo_update(j.todo);
+		outplan_update(j.outplan);
+		alist_update(j.alist);
+	} catch (e) {}
+}
+
 function bind_key(blank, entry_set) {
 	$(blank + ' input').bind('keyup', function (e) {
 		if (e.keyCode == 13) {
@@ -104,7 +147,8 @@ function bind_key(blank, entry_set) {
 				var ne = entry_set({'title':v});
 				ne.css('display', 'none');
 				ne.insertBefore($(blank));
-				ne.show('slow');
+				ne.show();
+				post_alldata();
 				$(this).val('');
 			}
 		}
@@ -149,27 +193,30 @@ function tip_div_close_click() {
 		break;
 	case 'tip3':
 		div.hide();
-		$('.tip_top').hide('slow');
-		$('.nav').show();
-		tip_stat = 'tip_done';
-		todo_update([]);
+		$('.tip_top').hide('slow', function() {
+			window.location.href = '?';
+		});
 		break;
 	}
 }
 
-$(document).ready(function() {
+function first_use() {
 	todo_update([
 		{'title':'Task 1', 'str':'*,-'},
 	]);
 	$('.nav').hide();
 	move_tip_div('#tip1', 'left', '#todo_blank');
 	$('.tip_div_close').click(tip_div_close_click);
-//	todo_update([
-//		{'title':'Task 1', 'str':'***---'},
-//		{'title':'Task 2', 'str':'***-*-'},
-//	]);
+}
+
+$(document).ready(function() {
 	bind_key('#todo_blank', todo_entry_set);
 	bind_key('#outplan_blank', outplan_entry_set);
 	bind_key('#alist_blank', alist_entry_set);
+	if ($.urlParam('firstuse') == '1') {
+		first_use();
+	} else {
+		get_alldata(update_alldata);
+	}
 });
 

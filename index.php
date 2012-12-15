@@ -114,24 +114,25 @@ require_once("data.php");
 	</div>
 	<div id=tip3 class=tip_div>
 		<h1> 注意：</h1>
-		<h2>记录添加以后无法更改</h2>
-		<h2>可以查看，但无法更改昨天的记录</h2>
+		<h2>1. 记录添加以后无法更改</h2>
+		<h2>2. 昨天的记录无法更改</h2>
 		<h6><a href=# class=tip_div_close>开始使用</a></h6>
 	</div>
 
-	<div class=tip_top>
-		欢迎第一次使用 ManyTomato ！
-	</div>
+	<?
+		if ($_GET[firstuse] == '1') {
+			?>
+			<div class=tip_top>
+				欢迎第一次使用 ManyTomato ！
+			</div>
+			<?
+		}
+	?>
 
 	<div class=nav>
 		<span><a href="data.php?exit=1">退出登陆</a></span>
 	</div>
 	<div class=main>
-		<?php
-		if ($_GET[firstuse] == '1') {
-			?> <p>欢迎第一次使用 ManyTomato </p> <?php
-		}
-		?>
 		<table class=todo_table rules=none>
 			<tr>
 				<th class=todo_thleft>今日任务 <?php echo date('m-d') ?></th>
