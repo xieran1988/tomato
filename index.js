@@ -215,6 +215,9 @@ function first_use() {
 }
 
 $(document).ready(function() {
+	if (!$.browser.chrome && !$.browser.safari) {
+		alert('请使用 Chrome 或者 Safari 浏览器访问');
+	}
 	$.istoday = $('var[name=nottoday]').length > 0;
 	if (!$.istoday) {
 		$('.blank_entry').show();
