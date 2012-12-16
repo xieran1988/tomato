@@ -37,19 +37,36 @@ function post_alldata() {
 		'outplan' : get_all_entries('.outplan_entry', outplan_entry_get),
 	 	'alist' : get_all_entries('.alist_entry', alist_entry_get)
 	};
-	console.log(data);
 	$.post("data.php?postdata=1", JSON.stringify(data), function (e) {
 //		console.log('ok', e);
 	});
 }
 
 function get_alldata(func) {
-	console.log('getalldata');
 	var date = $.urlParam('date');
 	$.get('data.php?getdata=1&date=' + date, function(data) {
-		console.log('getalldata', data);
 		func(data);
 	});
+}
+
+function todo_entry_title_mouseover(e) {
+	var t = $(e.target);
+	t.closest('.todo_entry').find('.todo_title_right').show();
+}
+
+function todo_entry_title_mouseout(e) {
+	var t = $(e.target);
+	t.closest('.todo_entry').find('.todo_title_right').hide();
+}
+
+function todo_entry_str_mouseover(e) {
+	var t = $(e.target);
+	t.closest('.todo_entry').find('.todo_str_right').show();
+}
+
+function todo_entry_str_mouseout(e) {
+	var t = $(e.target);
+	t.closest('.todo_entry').find('.todo_str_right').hide();
 }
 
 function todo_entry_set(j) {
@@ -69,11 +86,18 @@ function todo_entry_set(j) {
 		strbtn.append($('<button>').html(',').click(todo_str_btn_click));
 		strbtn.append($('<button>').html('-').click(todo_str_btn_click));
 	}
+	var strleft = $('<div class=todo_title_right>')
+		.append($('<button>').html('完成'));
 	return $('<tr>')
 			.attr('str', str)
 			.addClass('todo_entry').append(
-			$('<td>').html(title),
+			$('<td>').html(title).append(strleft)
+				.hover(todo_entry_title_mouseover, 
+							 todo_entry_title_mouseout)
+			,
 			$('<td>').append(strnode).append(strbtn)
+				.hover(todo_entry_str_mouseover,
+							 todo_entry_str_mouseout)
 	);
 }
 
@@ -144,7 +168,7 @@ function update_alldata(data) {
 }
 
 function bind_key(blank, entry_set) {
-	$(blank + ' input').bind('keyup', function (e) {
+	$(blank + ' input').bind('keydown', function (e) {
 		if (e.keyCode == 13) {
 			var v = $(this).val();
 			v = $.trim(v);
@@ -218,11 +242,16 @@ $(document).ready(function() {
 	if (!$.browser.chrome && !$.browser.safari) {
 		alert('请使用 Chrome 或者 Safari 浏览器访问');
 	}
-	$.istoday = $('var[name=nottoday]').length > 0;
-	if (!$.istoday) {
+	$.istoday = $('var[name=nottoday]').length == 0;
+	if ($.istoday) {
 		$('.blank_entry').show();
 	}
-	console.log($.istoday);
+	if ($.urlParam('test') == '1') {
+		todo_update([
+			{'title':'测试任务1', 'str':'**,,'},
+			{'title':'测试任务2', 'str':'**--'}
+		]);
+	}
 	bind_key('#todo_blank', todo_entry_set);
 	bind_key('#outplan_blank', outplan_entry_set);
 	bind_key('#alist_blank', alist_entry_set);

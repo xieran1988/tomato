@@ -115,7 +115,10 @@ class Tomato {
 	}
 
 	function mysql_init() {
-		mysql_connect("localhost", "yjwt", "52550501");
+		if (!mysql_connect("localhost", "yjwt", "52550501")) {
+			$this->log("mysql_init: fail");
+			exit();
+		}
 		mysql_query("use tomato");
 	}
 }

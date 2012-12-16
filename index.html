@@ -5,6 +5,7 @@
 
 		a {
 			color: #aaa;
+			text-decoration:none
 		}
 		a:hover {
 			background: yellow;
@@ -49,6 +50,15 @@
 		}
 		.todo_str_right {
 			float: right;
+			display: none;
+		}
+		.todo_title_right {
+			float: right;
+			display: none;
+			padding-right: 40px;
+		}
+		.todo_title_right button {
+			margin: 0;
 		}
 		.todo_str_left {
 			float: left;
@@ -105,12 +115,20 @@
 			display: none;
 		}
 
+		#todo_entry_title_menu {
+			display: none;
+		}
+
 	</style>
 	<script src=jquery.js></script>
 	<script src=index.js></script>
 </head>
 
 <body>
+
+	<div id=todo_entry_title_menu>
+		<button>完成</button>
+	</div>
 
 	<div id=tip1 class=tip_div>
 		<h1> 在这里新建一个任务 -></h1>
@@ -149,6 +167,9 @@
 		?><span><a href="index.php">今天</a></span><?
 		if ($date != date('Y-m-d')) {
 			?><var name='nottoday'></var><?
+		}
+		if ($getdata) {
+			?><var name='getdata'><?=$getdata?></var><?
 		}
 	?>
 	</div>
