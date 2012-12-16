@@ -1,4 +1,5 @@
 
+
 $(document).ready(function() {
 	$('[post]').each(function() {
 		$(this).click(function() {

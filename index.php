@@ -11,6 +11,9 @@ require_once("data.php");
 		a {
 			color: #aaa;
 		}
+		a:hover {
+			background: yellow;
+		}
 		body {
 			font: 13px sans-serif;
 			color: #444;
@@ -68,6 +71,7 @@ require_once("data.php");
 		}
 		.nav span {
 			float: right;
+			margin: 5px;
 		}
 		.tip_div { 
 			position: absolute; 
@@ -131,11 +135,20 @@ require_once("data.php");
 
 	<div class=nav>
 		<span><a href="data.php?exit=1">退出登陆</a></span>
+	<?
+		$date = $_GET["date"] ? date('Y-m-d', strtotime($_GET["date"])) : date('Y-m-d');
+		$date_md = date("m-d", strtotime($date));
+		$yesterday = date('Y-m-d', strtotime('-1 day', strtotime($date)));
+		$tomorrow = date('Y-m-d', strtotime('+1 day', strtotime($date)));
+		?><span><a href="index.php?date=<?=$tomorrow?>">-></a></span><?
+		?><span><a href="index.php?date=<?=$yesterday?>"><-</a></span><?
+		?><span><a href="index.php">今天</a></span><?
+	?>
 	</div>
 	<div class=main>
 		<table class=todo_table rules=none>
 			<tr>
-				<th class=todo_thleft>今日任务 <?php echo date('m-d') ?></th>
+				<th class=todo_thleft>今日任务 <?=$date_md?></th>
 				<th class=todo_thright></th>
 			</tr>
 			<tr id=todo_blank>
