@@ -44,7 +44,10 @@ function post_alldata() {
 }
 
 function get_alldata(func) {
-	$.get('data.php?getdata=1', function(data) {
+	console.log('getalldata');
+	var date = $.urlParam('date');
+	$.get('data.php?getdata=1&date=' + date, function(data) {
+		console.log('getalldata', data);
 		func(data);
 	});
 }
@@ -61,9 +64,11 @@ function todo_entry_set(j) {
 		strnode.append('<span class=todo_ch>' + ch + '</span>');
 	}
 	var strbtn = $('<div class=todo_str_right>');
-	strbtn.append($('<button>').html('*').click(todo_str_btn_click))
-	strbtn.append($('<button>').html(',').click(todo_str_btn_click));
-	strbtn.append($('<button>').html('-').click(todo_str_btn_click));
+	if ($.istoday) {
+		strbtn.append($('<button>').html('*').click(todo_str_btn_click))
+		strbtn.append($('<button>').html(',').click(todo_str_btn_click));
+		strbtn.append($('<button>').html('-').click(todo_str_btn_click));
+	}
 	return $('<tr>')
 			.attr('str', str)
 			.addClass('todo_entry').append(
@@ -210,6 +215,11 @@ function first_use() {
 }
 
 $(document).ready(function() {
+	$.istoday = $('var[name=nottoday]').length > 0;
+	if (!$.istoday) {
+		$('.blank_entry').show();
+	}
+	console.log($.istoday);
 	bind_key('#todo_blank', todo_entry_set);
 	bind_key('#outplan_blank', outplan_entry_set);
 	bind_key('#alist_blank', alist_entry_set);
