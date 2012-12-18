@@ -138,6 +138,10 @@
 			display: none;
 		}
 
+		var {
+			display: none;
+		}
+
 	</style>
 	<script src=jquery.js></script>
 	<script src=checkbrowser.js></script>
@@ -145,6 +149,9 @@
 </head>
 
 <body>
+
+	<var name=cfg><?= $cfg  ?></var>
+	<var name=data><?= $data ?></var>
 
 	<div id=todo_entry_title_menu>
 		<button>完成</button>
@@ -172,21 +179,6 @@
 	<div class=nav>
 		<span><a href="data.php?exit=1">退出</a></span>
 		<span><a href="about.html" target=_blank>关于</a></span>
-	<?
-		$date = $_GET["date"] ? date('Y-m-d', strtotime($_GET["date"])) : date('Y-m-d');
-		$date_md = date("m-d", strtotime($date));
-		$yesterday = date('Y-m-d', strtotime('-1 day', strtotime($date)));
-		$tomorrow = date('Y-m-d', strtotime('+1 day', strtotime($date)));
-		?><span><a href="index.php?date=<?=$tomorrow?>">></a></span><?
-		?><span><a href="index.php?date=<?=$yesterday?>"><</a></span><?
-		?><span><a href="index.php">今天</a></span><?
-		if ($date != date('Y-m-d')) {
-			?><var name='nottoday'></var><?
-		}
-		if ($getdata) {
-			?><var name='getdata'><?=$getdata?></var><?
-		}
-	?>
 	</div>
 	<div class=main>
 		<table class=todo_table rules=none>

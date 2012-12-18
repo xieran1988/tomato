@@ -10,32 +10,39 @@ class Tomato {
 	var $postdata;
 	var $ret;
 	var $logger;
+	var $d;
+	var $r;
 
-	function do_fastcgi() {
-
+	function __construct () {
+		$this->logger = new KLogger('/tmp/', KLogger::INFO);
 		if (!$_GET["date"]) 
 			$this->date = date('Y-m-d');
 		else
 			$this->date = date('Y-m-d', strtotime($_GET["date"]));
-		$this->logger = new KLogger('/tmp/', KLogger::INFO);
-		
-		if ($_GET[postdata]) {
+		$post = file_get_contents("php://input");
+		$this->d = array_merge($_GET, $_POST, json_decode($post));
+		$this->r = array();
+	}
+
+	function do_fastcgi() {
+
+		if ($this->d[postdata]) {
 			$this->need_login();
-			$this->postdata = file_get_contents("php://input");
 			$this->handle_postdata();
 		}
 
-		if ($_GET[getdata]) {
+		if ($this->d[getdata]) {
 			$this->need_login();
 			$this->handle_getdata();
 		}
 
-		if ($_GET[reg]) {
-			$this->email = $_POST[email];
-			$this->pass = $_POST[pass];
-			if (!$this->handle_reg()) 
-				$this->set_cookie();
-			jmp($this->ret);
+		if ($this->d[reg]) {
+			if (!$this->handle_reg()) {
+				$this->r[ret] = 'ok';
+			} else {
+				$this->r[ret] = 'fail';
+			}
+			$this->r[jmp] = '';
 		}
 
 		if ($_GET[login]) {
@@ -51,9 +58,6 @@ class Tomato {
 			setcookie('email', '');
 			jmp("login.php");
 		}
-	}
-
-	function do_cmdline() {
 	}
 
 	function log($s) {
@@ -83,7 +87,7 @@ class Tomato {
 		$r = mysql_fetch_assoc($r);
 		$val = $r[val];
 		$this->log("handle_getdata: $this->email,$this->date $val");
-		echo "$r[val]";
+		return $r[val];
 	}
 
 	function handle_reg() {

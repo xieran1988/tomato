@@ -269,7 +269,9 @@ function first_use() {
 }
 
 $(document).ready(function() {
-	$.is_today = $('var[name=nottoday]').length == 0;
+	var data = $('var[name=data]').html();
+	var cfg = jQuery.parseJSON($('var[name=cfg]').html());
+	$.is_today = cfg.is_today;
 	$.is_test = ($.urlParam('test') == '1');
 	$.is_firstuse = ($.urlParam('firstuse') == '1');
 	$.can_edit = ($.is_today || $.is_test || $.is_firstuse);
