@@ -31,6 +31,7 @@
 		}
 	</style>
 	<script src=jquery.js></script>
+	<script src=checkbrowser.js></script>
 	<script src=login.js></script>
 </head>
 

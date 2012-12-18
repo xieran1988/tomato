@@ -269,9 +269,6 @@ function first_use() {
 }
 
 $(document).ready(function() {
-	if (!$.browser.chrome && !$.browser.safari) {
-		alert('请使用 Chrome 或者 Safari 浏览器访问');
-	}
 	$.is_today = $('var[name=nottoday]').length == 0;
 	$.is_test = ($.urlParam('test') == '1');
 	$.is_firstuse = ($.urlParam('firstuse') == '1');
