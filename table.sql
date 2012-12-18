@@ -1,4 +1,6 @@
 
+use tomato;
+
 SET NAMES utf8;
 
 DROP TABLE IF EXISTS `entry`;

@@ -54,7 +54,6 @@ class Tomato {
 	}
 
 	function do_cmdline() {
-
 	}
 
 	function log($s) {

@@ -1,5 +1,3 @@
-create table user (
-	email varchar(40),
-	pass varchar(40)
-);
+
+grant all privileges on tomato.* to yjwt@localhost identified by '52550501';
 

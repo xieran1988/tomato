@@ -78,9 +78,6 @@ function todo_entry_str_mouseout(e) {
 	t2.hide();
 }
 
-function title_btn_click(e, entry, left) {
-}
-
 function todo_title_btn_click(e) {
 	var t = $(e.target);
 	var l = t.closest('.todo_entry');
@@ -89,23 +86,24 @@ function todo_title_btn_click(e) {
 	l.attr('del', '1');
 	l.find('td').unbind('hover');
 	t.hide();
-}
-
-function todo_str_btn_click(e) {
-	var t = $(e.target);
-	var t1 = t.closest('.todo_entry');
-	var t2 = t1.find('.todo_str_left');
+	post_alldata();
 }
 
 function todo_entry_set(j) {
 	var title = j.title;
-	var str = j.str;
-	if (str == undefined) {
-		str = '';
+	if (j.del == undefined) {
+		j.del = '';
+	}
+	if (j.str == undefined) {
+		j.str = '';
+	}
+	var strtitle = j.title;
+	if (j.del == '1') {
+		strtitle = '<strike>' + j.title + '</strike>';
 	}
 	var strnode = $('<div class=todo_str_left>');
-	for (var i = 0; i < str.length; i++) {
-		var ch = str.substr(i, 1);
+	for (var i = 0; i < j.str.length; i++) {
+		var ch = j.str.substr(i, 1);
 		strnode.append('<span class=todo_ch>' + ch + '</span>');
 	}
 	var strbtn = $('<div class=todo_str_right>');
@@ -114,30 +112,30 @@ function todo_entry_set(j) {
 		strbtn.append($('<a href=#>').html('-').click(todo_str_btn_click));
 		strbtn.append($('<a href=#>').html(',').click(todo_str_btn_click));
 	}
-	var titleleft = $('<div class=todo_title_left>').html(title);
+	var titleleft = $('<div class=todo_title_left>').html(strtitle);
 	var titleright = $('<div class=todo_title_right>')
-		.append($('<a href=#>').html('完成')
-						.click(todo_title_btn_click)
-					);
-	return $('<tr>')
-			.attr('str', str)
-			.addClass('todo_entry').append(
-			$('<td>').append(titleleft).append(titleright)
-				.hover(todo_entry_title_mouseover, 
-							 todo_entry_title_mouseout)
-			,
-			$('<td>').append(strnode).append(strbtn)
-				.hover(todo_entry_str_mouseover,
-							 todo_entry_str_mouseout)
-	);
+		.append($('<a href=#>').html('完成').click(todo_title_btn_click));
+	var tdtitle = $('<td>').append(titleleft).append(titleright);
+	if (j.del != '1') {
+		console.log(j.del);
+		tdtitle.hover(todo_entry_title_mouseover, todo_entry_title_mouseout); 
+	}
+	var tdstr = $('<td>').append(strnode).append(strbtn);
+	if (j.del != '1') {
+		tdstr.hover(todo_entry_str_mouseover, todo_entry_str_mouseout);
+	}
+
+	var tr = $('<tr>').addClass('todo_entry')
+			.attr('str', j.str).attr('title', j.title).attr('del', j.del)
+			.append(tdtitle, tdstr);
+	return tr;
 }
 
 function todo_entry_get(o) {
-	var td = $(o).find('td');
-	var title = $(td[0]).html();
-	var spans = $(td[1]).find('span[class=todo_ch]');
+	var title = $(o).attr('title');
 	var str = $(o).attr('str');
-	return {'title':title, 'str':str};
+	var del = $(o).attr('del');
+	return {'title':title, 'str':str, 'del':del};
 }
 
 function todo_str_btn_click() {
@@ -249,7 +247,7 @@ function tip_div_close_click() {
 	case 'tip2':
 		div.hide();
 		tip_stat = 'tip3';
-		move_tip_div('#tip3', 'right', '.todo_table tr:eq(1)');
+		move_tip_div('#tip3', 'left', '.todo_table tr:eq(1)');
 		break;
 	case 'tip3':
 		div.hide();
@@ -276,7 +274,8 @@ $(document).ready(function() {
 	}
 	$.is_today = $('var[name=nottoday]').length == 0;
 	$.is_test = ($.urlParam('test') == '1');
-	$.can_edit = ($.is_today || $.is_test);
+	$.is_firstuse = ($.urlParam('firstuse') == '1');
+	$.can_edit = ($.is_today || $.is_test || $.is_firstuse);
 	if ($.can_edit) {
 		$('.blank_entry').show();
 	}
@@ -292,7 +291,7 @@ $(document).ready(function() {
 	bind_key('#todo_blank', todo_entry_set);
 	bind_key('#outplan_blank', outplan_entry_set);
 	bind_key('#alist_blank', alist_entry_set);
-	if ($.urlParam('firstuse') == '1') {
+	if ($.is_firstuse) {
 		first_use();
 	} else {
 		get_alldata(update_alldata);

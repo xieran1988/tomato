@@ -40,6 +40,7 @@
 		.todo_thright {
 			width: 420px;
 		}
+		strike { width: 3px; }
 		.todo_hold {
 			height: 60px; 
 		}
@@ -153,22 +154,23 @@
 		<h6><a href=# class=tip_div_close>我知道了</a></h6>
 	</div>
 	<div id=tip2 class=tip_div>
-		<h1> <- 点击按钮记录相应的符号 </h1>
+		<h1> <- 鼠标移到右边选择标记 </h1>
+		<h2>1. 记录添加以后无法更改</h2>
+		<h2>2. 昨天的记录无法更改</h2>
 		<h6><a href=# class=tip_div_close>我知道了</a></h6>
 	</div>
 	<div id=tip3 class=tip_div>
-		<h1> 注意：</h1>
-		<h2>1. 记录添加以后无法更改</h2>
-		<h2>2. 昨天的记录无法更改</h2>
+		<h1> 鼠标移到标题上选择完成 -></h1>
 		<h6><a href=# class=tip_div_close>开始使用</a></h6>
 	</div>
 
 	<div class=tip_top>
-		欢迎第一次使用 ManyTomato ！
+		欢迎使用 ManyTomato ，实时记录你的番茄时间！
 	</div>
 
 	<div class=nav>
-		<span><a href="data.php?exit=1">登出</a></span>
+		<span><a href="data.php?exit=1">退出</a></span>
+		<span><a href="about.html" target=_blank>关于</a></span>
 	<?
 		$date = $_GET["date"] ? date('Y-m-d', strtotime($_GET["date"])) : date('Y-m-d');
 		$date_md = date("m-d", strtotime($date));
