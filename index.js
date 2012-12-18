@@ -51,7 +51,8 @@ function get_alldata(func) {
 
 function todo_entry_title_mouseover(e) {
 	var t = $(e.target);
-	t.closest('.todo_entry').find('.todo_title_right').show();
+	var t1 = t.closest('.todo_entry');
+	var t2 = t1.find('.todo_title_right').show();
 }
 
 function todo_entry_title_mouseout(e) {
@@ -61,12 +62,39 @@ function todo_entry_title_mouseout(e) {
 
 function todo_entry_str_mouseover(e) {
 	var t = $(e.target);
-	t.closest('.todo_entry').find('.todo_str_right').show();
+	var t1 = t.closest('.todo_entry');
+	var t2 = t1.find('.todo_str_right');
+	var t3 = t1.find('.todo_title_left');
+	t3.addClass('todo_left_selected');
+	t2.show();
 }
 
 function todo_entry_str_mouseout(e) {
 	var t = $(e.target);
-	t.closest('.todo_entry').find('.todo_str_right').hide();
+	var t1 = t.closest('.todo_entry');
+	var t2 = t1.find('.todo_str_right');
+	var t3 = t1.find('.todo_title_left');
+	t3.removeClass('todo_left_selected');
+	t2.hide();
+}
+
+function title_btn_click(e, entry, left) {
+}
+
+function todo_title_btn_click(e) {
+	var t = $(e.target);
+	var l = t.closest('.todo_entry');
+	var l2 = l.find('.todo_title_left');
+	l2.html('<strike>' + l2.html() + '</strike>');
+	l.attr('del', '1');
+	l.find('td').unbind('hover');
+	t.hide();
+}
+
+function todo_str_btn_click(e) {
+	var t = $(e.target);
+	var t1 = t.closest('.todo_entry');
+	var t2 = t1.find('.todo_str_left');
 }
 
 function todo_entry_set(j) {
@@ -81,17 +109,20 @@ function todo_entry_set(j) {
 		strnode.append('<span class=todo_ch>' + ch + '</span>');
 	}
 	var strbtn = $('<div class=todo_str_right>');
-	if ($.istoday) {
-		strbtn.append($('<button>').html('*').click(todo_str_btn_click))
-		strbtn.append($('<button>').html(',').click(todo_str_btn_click));
-		strbtn.append($('<button>').html('-').click(todo_str_btn_click));
+	if ($.can_edit) {
+		strbtn.append($('<a href=#>').html('*').click(todo_str_btn_click))
+		strbtn.append($('<a href=#>').html('-').click(todo_str_btn_click));
+		strbtn.append($('<a href=#>').html(',').click(todo_str_btn_click));
 	}
-	var strleft = $('<div class=todo_title_right>')
-		.append($('<button>').html('完成'));
+	var titleleft = $('<div class=todo_title_left>').html(title);
+	var titleright = $('<div class=todo_title_right>')
+		.append($('<a href=#>').html('完成')
+						.click(todo_title_btn_click)
+					);
 	return $('<tr>')
 			.attr('str', str)
 			.addClass('todo_entry').append(
-			$('<td>').html(title).append(strleft)
+			$('<td>').append(titleleft).append(titleright)
 				.hover(todo_entry_title_mouseover, 
 							 todo_entry_title_mouseout)
 			,
@@ -234,6 +265,7 @@ function first_use() {
 		{'title':'Task 1', 'str':'*,-'},
 	]);
 	$('.nav').hide();
+	$('.tip_top').show();
 	move_tip_div('#tip1', 'left', '#todo_blank');
 	$('.tip_div_close').click(tip_div_close_click);
 }
@@ -242,14 +274,19 @@ $(document).ready(function() {
 	if (!$.browser.chrome && !$.browser.safari) {
 		alert('请使用 Chrome 或者 Safari 浏览器访问');
 	}
-	$.istoday = $('var[name=nottoday]').length == 0;
-	if ($.istoday) {
+	$.is_today = $('var[name=nottoday]').length == 0;
+	$.is_test = ($.urlParam('test') == '1');
+	$.can_edit = ($.is_today || $.is_test);
+	if ($.can_edit) {
 		$('.blank_entry').show();
 	}
-	if ($.urlParam('test') == '1') {
+	if ($.is_test) {
 		todo_update([
-			{'title':'测试任务1', 'str':'**,,'},
-			{'title':'测试任务2', 'str':'**--'}
+			/*
+			{'title':'设计 mysql 表头', 'str':'**'},
+			{'title':'写完 index.html', 'str':'**--'},
+			{'title':'写完 login.html', 'str':'**,,'},
+			*/
 		]);
 	}
 	bind_key('#todo_blank', todo_entry_set);

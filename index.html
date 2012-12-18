@@ -10,8 +10,8 @@
 		a:hover {
 			background: yellow;
 		}
-		body {
-			font: 13px sans-serif;
+		body,td,th {
+			font: 19px sans-serif;
 			color: #444;
 		}
 		.main {
@@ -31,8 +31,11 @@
 		table {
 			margin-bottom: 50px;
 		}
+		.todo_left_selected {
+			background-color: #ddd;
+		}
 		.todo_thleft {
-			width: 320px;
+			width: 420px;
 		}
 		.todo_thright {
 			width: 420px;
@@ -48,20 +51,34 @@
 		}
 		.todo_ch {
 		}
-		.todo_str_right {
-			float: right;
-			display: none;
+		.todo_str_right a {
+			margin-left: 5px;
+			font-size: 30px;
+			background-color: #eee;
+			padding: 10px;
+		}
+		.todo_str_right a:hover {
+			background-color: #ddd;
+		}
+		.todo_title_left {
+			float: left;
 		}
 		.todo_title_right {
 			float: right;
 			display: none;
-			padding-right: 40px;
+			padding-right: 10px;
 		}
 		.todo_title_right button {
 			margin: 0;
 		}
 		.todo_str_left {
 			float: left;
+		}
+		.todo_str_left {
+		}
+		.todo_str_right {
+			float: right;
+			display: none;
 		}
 		.outplan_th {
 			width: 500px;
@@ -110,6 +127,7 @@
 			margin:0 auto;
 			width: 400px;
 			font-size: 25px;
+			display: none;
 		}
 		.blank_entry {
 			display: none;
@@ -145,25 +163,19 @@
 		<h6><a href=# class=tip_div_close>开始使用</a></h6>
 	</div>
 
-	<?
-		if ($_GET[firstuse] == '1') {
-			?>
-			<div class=tip_top>
-				欢迎第一次使用 ManyTomato ！
-			</div>
-			<?
-		}
-	?>
+	<div class=tip_top>
+		欢迎第一次使用 ManyTomato ！
+	</div>
 
 	<div class=nav>
-		<span><a href="data.php?exit=1">退出登陆</a></span>
+		<span><a href="data.php?exit=1">登出</a></span>
 	<?
 		$date = $_GET["date"] ? date('Y-m-d', strtotime($_GET["date"])) : date('Y-m-d');
 		$date_md = date("m-d", strtotime($date));
 		$yesterday = date('Y-m-d', strtotime('-1 day', strtotime($date)));
 		$tomorrow = date('Y-m-d', strtotime('+1 day', strtotime($date)));
-		?><span><a href="index.php?date=<?=$tomorrow?>">-></a></span><?
-		?><span><a href="index.php?date=<?=$yesterday?>"><-</a></span><?
+		?><span><a href="index.php?date=<?=$tomorrow?>">></a></span><?
+		?><span><a href="index.php?date=<?=$yesterday?>"><</a></span><?
 		?><span><a href="index.php">今天</a></span><?
 		if ($date != date('Y-m-d')) {
 			?><var name='nottoday'></var><?
@@ -180,7 +192,7 @@
 				<th class=todo_thright></th>
 			</tr>
 			<tr id=todo_blank class=blank_entry>
-				<td><input type=text placeholder="新建任务"></input></td>
+				<td><input type=text placeholder="新建"></input></td>
 				<td></td>
 			</tr>
 			<tr class=todo_hold>
@@ -193,7 +205,7 @@
 				<th class=outplan_th>计划外紧急事件</th>
 			</tr>
 			<tr id=outplan_blank class=blank_entry>
-				<td><input type=text placeholder="新建计划外事件"></input></td>
+				<td><input type=text placeholder="新建"></input></td>
 			</tr>
 			<tr class=output_hold>
 				<td></td><td></td>
@@ -205,7 +217,7 @@
 			<th class=alist_th>活动清单（留着以后完成的任务）</th>
 			</tr>
 			<tr id=alist_blank class=blank_entry>
-				<td><input type=text placeholder="新建活动清单"></input></td>
+				<td><input type=text placeholder="新建"></input></td>
 			</tr>
 			<tr class=alist_hold>
 				<td></td><td></td>
