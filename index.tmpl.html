@@ -150,8 +150,7 @@
 
 <body>
 
-	<var name=cfg><?= $cfg  ?></var>
-	<var name=data><?= $data ?></var>
+	<script> $.r = <?= $data ?> </script>
 
 	<div id=todo_entry_title_menu>
 		<button>完成</button>
@@ -179,6 +178,9 @@
 	<div class=nav>
 		<span><a href="data.php?exit=1">退出</a></span>
 		<span><a href="about.html" target=_blank>关于</a></span>
+		<span><a href="data.php?date=<?=$p->r[datenext]?>"> &gt; </a></span>
+		<span><a href="data.php?date=<?=$p->r[dateprev]?>"> &lt; </a></span>
+		<span><a href="data.php?date=<?=$p->r[today]?>"> 今天 </a></span>
 	</div>
 	<div class=main>
 		<table class=todo_table rules=none>
