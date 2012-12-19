@@ -269,7 +269,44 @@ function first_use() {
 	$('.tip_div_close').click(tip_div_close_click);
 }
 
+function clock_timer() {
+	if (!$.clock_tm) 
+		return ;
+	var tm = (new Date()).getTime();
+	var diff = ($.clock_tm - tm) / 1000;
+	var minute = Math.floor(diff / 60);
+	var second = Math.floor(diff) % 60;
+	var s;
+
+	if (diff <= 0) {
+		alert('番茄时间到');
+		$('.clock').html("秒表");
+		return false;
+	}
+
+	if (second < 10) 
+		s = minute + ':0' + second;
+	else
+		s = minute + ':' + second;
+	$('.clock').html(s);
+
+	setTimeout(clock_timer, 500);
+}
+
+function clock_click(e) {
+	if ($.clock_tm) {
+		if (confirm("放弃番茄？")) {
+			$('.clock').html("秒表");
+			delete $.clock_tm;
+		}
+		return ;
+	}
+	$.clock_tm = (new Date()).getTime() + 1000*30;
+	clock_timer();
+}
+
 $(document).ready(function() {
+	$('.clock').click(clock_click);
 	$.is_today = $.r.is_today;
 	$.is_test = ($.urlParam('test') == '1');
 	$.is_firstuse = ($.urlParam('firstuse') == '1');
