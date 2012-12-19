@@ -40,7 +40,13 @@ function post_alldata(act) {
 	 	'alist' : get_all_entries('.alist_entry', alist_entry_get)
 	};
 	var s = $.toJSON({"val":data, "act":act});
-	$.post("data.php?postdata=1", s, function (e) {
+	$.post("data.php?postdata=1", s, function (data) {
+		console.log(data);
+		d = jQuery.parseJSON(data);
+		if (d.new_prize) {
+			alert('获得新成就：\n' + d.new_prize);
+			window.location.href = "?";
+		}
 //		console.log('ok', e);
 	});
 }
@@ -323,6 +329,7 @@ $(document).ready(function() {
 	if ($.can_edit) {
 		$('.blank_entry').show();
 	}
+	$('.prize_list').show();
 	if ($.is_test) {
 		todo_update([
 			/*

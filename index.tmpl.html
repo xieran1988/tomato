@@ -151,6 +151,23 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 			display: none;
 		}
 
+		.prize_list {
+			position: absolute; 
+			top: 50px;
+			left: 50px;
+			width: 600px;
+			height: 200px;
+			float: right;
+			z-index: -1;
+		}
+		.prize_list p {
+			color: #aaa;
+			margin: 0;
+		}
+		.prize_list h2 {
+			margin: 0;
+		}
+
 	</style>
 	<script src=jquery.js></script>
 	<script src=jquery.json-2.4.min.js></script>
@@ -182,6 +199,13 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 
 	<div class=tip_top>
 		欢迎使用 ManyTomato ，实时记录你的番茄时间！
+	</div>
+
+	<div class=prize_list>
+		<h2> --- 成就列表 --- </h2>
+		<? foreach ($p->r[prize] as $v) {	?>
+			<p><?= $v ?></p>
+		<? } ?>
 	</div>
 
 	<div class=wrap>

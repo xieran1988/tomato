@@ -14,11 +14,19 @@ class Tomato {
 	var $r;
 	var $sqlqry;
 	var $day_prize;
-	var $tot_prize;
+	var $new_prize;
+	var $prize_txts;
 
 	function __construct ($myarg = array()) {
 		global $argv;
 		$this->logger = new KLogger("/tmp/", KLogger::INFO);
+
+		$this->prize_txts = array(
+				"break_6_in_a_tomato" => "烂番茄：一个番茄里六次被打断",
+				"more_than_6_in_a_tomato" => "大番茄：一个任务超过六个番茄",
+				"more_than_16_tomato_a_day" => "饭桶：今天你吃了十六个番茄以上",
+				"cont_8_tomatos" => "专注：连续工作八个番茄钟",
+			);
 
 		$rawpost = file_get_contents("php://input");
 		$_postjs = json_decode($rawpost, true);
@@ -114,6 +122,7 @@ class Tomato {
 								 	);
 			 */
 			array_push($this->day_prize, $s);
+			array_push($this->new_prize, $this->prize_txts[$s]);
 		}
 	}
 
@@ -122,7 +131,10 @@ class Tomato {
 											"email = '%1' and date(time) = '%2'", 
 											$this->d[email], $this->date
 											);
-		$this->day_prize = $r[$prize] ? explode(",", $r[prize]) : array();
+		$this->log("cur_prize = " . $r[prize]);
+		$this->day_prize = $r[prize] ? explode(",", $r[prize]) : array();
+
+		$this->new_prize = array();
 
 		/*
 		$r = $this->query("select * from user where email = '%1'", $this->d[email]);
@@ -147,7 +159,7 @@ class Tomato {
 
 		$fmt = "select count(*) as cnt, act, val from log ".
 					 "where email = '%1' and ".
-					 "date(time) = '%2'".
+					 "date(time) = '%2' ".
 					 "group by val, act";
 		$r = $this->query($fmt, $this->d[email], $this->date);
 		$nr = 0;
@@ -183,10 +195,13 @@ class Tomato {
 			$r = mysql_fetch_assoc($this->sqlqry);
 		}
 
-		$this->query("update entry set prize = '%1' ".
-								 "where email = '%2' and time = '%3' ", 
-								 implode(",", $this->day_prize), $this->d[email], $this->date
-								);
+		if (count($this->new_prize)) {
+			$this->query("update entry set prize = '%1' ".
+									 "where email = '%2' and time = '%3' ", 
+									 implode(",", $this->day_prize), $this->d[email], $this->date
+									);
+			$this->r[new_prize] = implode(",", $this->new_prize);
+		}
 	}
 
 	function handle_postdata() {
@@ -209,6 +224,7 @@ class Tomato {
 							 				"values('%1', now(), '%2') ",
 							 				$this->d[email], $this->d[act]
 						  				);
+		$this->check_prizes();
 		$this->r[ret] = 'ok';
 	}
 
@@ -227,14 +243,10 @@ class Tomato {
 		}
 		if ($r[prize]) {
 			$this->r[prize] = array();
-			$txts = array(
-				"break_6_in_a_tomato" => "烂番茄：一个番茄里六次被打断",
-				"more_than_6_in_a_tomato" => "大番茄：一个任务超过六个番茄",
-				"more_than_16_tomato_a_day" => "饭桶：今天你吃了十六个番茄以上",
-			);
-			for (explode(",", $r[prize]) as $p) {
-				if (in_array($p, $txts))
-					array_push($this->r[prize], $txts[$p]);
+			foreach (explode(",", $r[prize]) as $p) {
+				if ($this->prize_txts[$p]) {
+					array_push($this->r[prize], $this->prize_txts[$p]);
+				}
 			}
 		}
 		$this->r[today] = date("Y-m-d");
