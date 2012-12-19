@@ -6,7 +6,7 @@
 	$p->handle();
 	if ($p->r[jmp])
 		js_jmp($p->r[jmp]);
-	$data = json_decode($p->r);
+	$data = json_encode($p->r);
 	require_once("index.tmpl.html");
 ?>
 

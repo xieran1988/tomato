@@ -32,12 +32,14 @@ function get_all_entries(entry, entry_get) {
 }
 
 function post_alldata() {
+	if ($.is_firstuse)
+		return ;
 	var data = {
 		'todo' : get_all_entries('.todo_entry', todo_entry_get), 
 		'outplan' : get_all_entries('.outplan_entry', outplan_entry_get),
 	 	'alist' : get_all_entries('.alist_entry', alist_entry_get)
 	};
-	$.post("data.php?postdata=1", JSON.stringify(data), function (e) {
+	$.post("data.php?postdata=1", JSON.stringify({"val":data}), function (e) {
 //		console.log('ok', e);
 	});
 }
@@ -45,7 +47,7 @@ function post_alldata() {
 function get_alldata(func) {
 	var date = $.urlParam('date');
 	$.get('data.php?getdata=1&date=' + date, function(data) {
-		func(data);
+		func(data.val);
 	});
 }
 
@@ -187,9 +189,8 @@ function alist_update(j) {
 	table_update(j, '.alist_entry', '#alist_blank', alist_entry_set);
 }
 
-function update_alldata(data) {
+function update_alldata(j) {
 	try {
-		j = jQuery.parseJSON(data);
 		todo_update(j.todo);
 		outplan_update(j.outplan);
 		alist_update(j.alist);
@@ -269,9 +270,7 @@ function first_use() {
 }
 
 $(document).ready(function() {
-	var data = $('var[name=data]').html();
-	var cfg = jQuery.parseJSON($('var[name=cfg]').html());
-	$.is_today = cfg.is_today;
+	$.is_today = $.r.is_today;
 	$.is_test = ($.urlParam('test') == '1');
 	$.is_firstuse = ($.urlParam('firstuse') == '1');
 	$.can_edit = ($.is_today || $.is_test || $.is_firstuse);
@@ -290,10 +289,11 @@ $(document).ready(function() {
 	bind_key('#todo_blank', todo_entry_set);
 	bind_key('#outplan_blank', outplan_entry_set);
 	bind_key('#alist_blank', alist_entry_set);
+	console.log($.r);
 	if ($.is_firstuse) {
 		first_use();
 	} else {
-		get_alldata(update_alldata);
+		update_alldata($.r.val);
 	}
 });
 

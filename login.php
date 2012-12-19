@@ -47,6 +47,9 @@
 				<?
 					if ($_GET[email_used]) {
 						?> <span class=err>此邮箱已被使用</span> <?
+					} 
+					if ($_GET["empty"]) {
+						?> <span class=err>邮箱或密码不能为空</span> <?
 					}
 				?>
 				<br>
