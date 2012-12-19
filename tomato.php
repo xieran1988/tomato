@@ -12,14 +12,13 @@ class Tomato {
 	var $logger;
 	var $d;
 	var $r;
+	var $sqlqry;
+	var $day_prize;
+	var $tot_prize;
 
 	function __construct ($myarg = array()) {
 		global $argv;
 		$this->logger = new KLogger("/tmp/", KLogger::INFO);
-		if (!$_GET["date"]) 
-			$this->date = date("Y-m-d");
-		else
-			$this->date = date("Y-m-d", strtotime($_GET["date"]));
 
 		$rawpost = file_get_contents("php://input");
 		$_postjs = json_decode($rawpost, true);
@@ -46,6 +45,12 @@ class Tomato {
 				}
 			}
 		}
+
+		if (!$this->d["date"]) 
+			$this->date = date("Y-m-d");
+		else
+			$this->date = date("Y-m-d", strtotime($this->d["date"]));
+
 		$this->r = array();
 		$s = json_encode($this->d);
 		$this->log("req $s");
@@ -90,10 +95,98 @@ class Tomato {
 	function query() {
 		$args = func_get_args();
 		$sql = $this->fmt($args);
-		$r = mysql_query($sql);
-		$r = mysql_fetch_assoc($r);
 		$this->log("query $sql");
+		$this->sqlqry = mysql_query($sql);
+		if (!$this->sqlqry) {
+			$this->log("query_err " . mysql_error());
+		}
+		$r = mysql_fetch_assoc($this->sqlqry);
 		return $r;
+	}
+
+	function add_prize($s) {
+		if (!in_array($s, $this->day_prize)) {
+			$this->log("add prize $s");
+			/*
+			$this->query("insert into log(email, time, act, val) ".
+									 "values('%1', 'now()', 'prize', '%2')",
+									 $this->d[email], $s
+								 	);
+			 */
+			array_push($this->day_prize, $s);
+		}
+	}
+
+	function check_prizes() {
+		$r = $this->query("select * from entry where ".
+											"email = '%1' and date(time) = '%2'", 
+											$this->d[email], $this->date
+											);
+		$this->day_prize = $r[$prize] ? explode(",", $r[prize]) : array();
+
+		/*
+		$r = $this->query("select * from user where email = '%1'", $this->d[email]);
+		$this->tot_prize = explode(",", $r[prize]);
+
+		$r = $this->query("select count(*) as cnt, time from log ".
+											"where email = '%1' and act = 'add*' and ".
+											"time >= date_sub('%2', interval 8 day) ".
+											"group by time",
+											$this->d[email], $this->date
+										 );
+		$nr = 0;
+		while ($r) {
+			if ($r[cnt] > 0) 
+				$nr++;
+			$r = mysql_fetch_assoc($this->sqlqry);
+		}
+		if ($nr >= 7) {
+			$this->add_prize("cont_tomato_a_week");
+		}
+		 */
+
+		$fmt = "select count(*) as cnt, act, val from log ".
+					 "where email = '%1' and ".
+					 "date(time) = '%2'".
+					 "group by val, act";
+		$r = $this->query($fmt, $this->d[email], $this->date);
+		$nr = 0;
+		while ($r) {
+			if ($r[act] == "add," && $r[cnt] >= 6) 
+				$this->add_prize("break_6_in_a_tomato");
+			if ($r[act] == "add*" && $r[cnt] >= 6) 
+				$this->add_prize("more_than_6_in_a_tomato");
+			if ($r[act] == "add*")
+				$nr += $r[cnt];
+			$r = mysql_fetch_assoc($this->sqlqry);
+		}
+		if ($nr >= 16)
+			$this->add_prize("more_than_16_tomato_a_day");
+
+		$r = $this->query("select * from log where email = '%1' and date(time) = '%2' ".
+											"order by time",
+											$this->d[email], $this->date
+										 );
+		$last_ts = strtotime($this->date);
+		$nr = 0;
+		while ($r) {
+			if ($r[act] == "add*") {
+				$ts = strtotime($r["time"]);
+				if ($ts - $last_ts < 60*32) 
+					$nr++;
+				else
+					$nr = 1;
+				$last_ts = $ts;
+				if ($nr >= 8) 
+					$this->add_prize("cont_8_tomatos");
+			}
+			$r = mysql_fetch_assoc($this->sqlqry);
+		}
+
+		$this->query("update entry set prize = '%1' ".
+								 "where email = '%2' and time = '%3' ", 
+								 implode(",", $this->day_prize), $this->d[email], $this->date
+								);
 	}
 
 	function handle_postdata() {
@@ -112,6 +205,10 @@ class Tomato {
 							 				"on duplicate key update val = '%3'",
 							 				$this->d[email], $this->date, $val, $val
 						  				);
+		$r = $this->query("insert into log(email, time, act) ".
+							 				"values('%1', now(), '%2') ",
+							 				$this->d[email], $this->d[act]
+						  				);
 		$this->r[ret] = 'ok';
 	}
 
@@ -127,6 +224,18 @@ class Tomato {
 			$this->r[val] = json_decode(base64_decode($r[val]), true);
 		} else {
 			$this->r[ret] = 'fail';
+		}
+		if ($r[prize]) {
+			$this->r[prize] = array();
+			$txts = array(
+				"break_6_in_a_tomato" => "烂番茄：一个番茄里六次被打断",
+				"more_than_6_in_a_tomato" => "大番茄：一个任务超过六个番茄",
+				"more_than_16_tomato_a_day" => "饭桶：今天你吃了十六个番茄以上",
+			);
+			for (explode(",", $r[prize]) as $p) {
+				if (in_array($p, $txts))
+					array_push($this->r[prize], $txts[$p]);
+			}
 		}
 		$this->r[today] = date("Y-m-d");
 		$this->r[date] = $this->date;

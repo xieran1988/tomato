@@ -31,7 +31,7 @@ function get_all_entries(entry, entry_get) {
 	});
 }
 
-function post_alldata() {
+function post_alldata(act) {
 	if ($.is_firstuse)
 		return ;
 	var data = {
@@ -39,7 +39,7 @@ function post_alldata() {
 		'outplan' : get_all_entries('.outplan_entry', outplan_entry_get),
 	 	'alist' : get_all_entries('.alist_entry', alist_entry_get)
 	};
-	var s = $.toJSON({"val":data});
+	var s = $.toJSON({"val":data, "act":act});
 	$.post("data.php?postdata=1", s, function (e) {
 //		console.log('ok', e);
 	});
@@ -97,7 +97,7 @@ function todo_title_btn_click(e) {
 	l.attr('del', '1');
 	l.find('td').unbind('hover');
 	t.hide();
-	post_alldata();
+	post_alldata('done');
 }
 
 function todo_entry_set(j) {
@@ -157,7 +157,7 @@ function todo_str_btn_click() {
 	var str = tr.attr('str');
 	tr.attr('str', str + ch);
 	l.append(span);
-	post_alldata();
+	post_alldata('add' + ch);
 }
 
 function todo_update(j) {
@@ -216,7 +216,7 @@ function bind_key(blank, entry_set) {
 				ne.css('display', 'none');
 				ne.insertBefore($(blank));
 				ne.show();
-				post_alldata();
+				post_alldata('new' + blank);
 				$(this).val('');
 			}
 		}

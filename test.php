@@ -2,8 +2,9 @@
 
 require_once("tomato.php");
 
-$p = new Tomato();
-echo $p->fmt(array("ccc %1", "ha1", "ha2"));
+$p = new Tomato(array("email"=>"a","date"=>"2012-12-09"));
+$p->mysql_init();
+$p->check_prizes();
 
 ?>
 
