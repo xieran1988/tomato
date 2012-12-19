@@ -39,7 +39,8 @@ function post_alldata() {
 		'outplan' : get_all_entries('.outplan_entry', outplan_entry_get),
 	 	'alist' : get_all_entries('.alist_entry', alist_entry_get)
 	};
-	$.post("data.php?postdata=1", JSON.stringify({"val":data}), function (e) {
+	var s = $.toJSON({"val":data});
+	$.post("data.php?postdata=1", s, function (e) {
 //		console.log('ok', e);
 	});
 }
@@ -51,19 +52,27 @@ function get_alldata(func) {
 	});
 }
 
+function get_target(e) {
+	if ($.browser.msie) {
+		return window.event.srcElement;
+	}
+	return (e.target);
+}
+
 function todo_entry_title_mouseover(e) {
-	var t = $(e.target);
+	var t = $(get_target(e));
 	var t1 = t.closest('.todo_entry');
-	var t2 = t1.find('.todo_title_right').show();
+	var t2 = t1.find('.todo_title_right');
+	t2.show();
 }
 
 function todo_entry_title_mouseout(e) {
-	var t = $(e.target);
+	var t = $(get_target(e));
 	t.closest('.todo_entry').find('.todo_title_right').hide();
 }
 
 function todo_entry_str_mouseover(e) {
-	var t = $(e.target);
+	var t = $(get_target(e));
 	var t1 = t.closest('.todo_entry');
 	var t2 = t1.find('.todo_str_right');
 	var t3 = t1.find('.todo_title_left');
@@ -72,7 +81,7 @@ function todo_entry_str_mouseover(e) {
 }
 
 function todo_entry_str_mouseout(e) {
-	var t = $(e.target);
+	var t = $(get_target(e));
 	var t1 = t.closest('.todo_entry');
 	var t2 = t1.find('.todo_str_right');
 	var t3 = t1.find('.todo_title_left');
@@ -81,7 +90,7 @@ function todo_entry_str_mouseout(e) {
 }
 
 function todo_title_btn_click(e) {
-	var t = $(e.target);
+	var t = $(get_target(e));
 	var l = t.closest('.todo_entry');
 	var l2 = l.find('.todo_title_left');
 	l2.html('<strike>' + l2.html() + '</strike>');
@@ -115,11 +124,11 @@ function todo_entry_set(j) {
 		strbtn.append($('<a href=#>').html(',').click(todo_str_btn_click));
 	}
 	var titleleft = $('<div class=todo_title_left>').html(strtitle);
-	var titleright = $('<div class=todo_title_right>')
-		.append($('<a href=#>').html('完成').click(todo_title_btn_click));
+//	var titleright_btn = $('<a href=#>').html('完成').click(todo_title_btn_click);
+	titleright_btn = '<a href=# onclick="todo_title_btn_click(event)" >完成</a>';
+	var titleright = $('<div class=todo_title_right>').append(titleright_btn);
 	var tdtitle = $('<td>').append(titleleft).append(titleright);
 	if (j.del != '1') {
-		console.log(j.del);
 		tdtitle.hover(todo_entry_title_mouseover, todo_entry_title_mouseout); 
 	}
 	var tdstr = $('<td>').append(strnode).append(strbtn);
@@ -326,7 +335,6 @@ $(document).ready(function() {
 	bind_key('#todo_blank', todo_entry_set);
 	bind_key('#outplan_blank', outplan_entry_set);
 	bind_key('#alist_blank', alist_entry_set);
-	console.log($.r);
 	if ($.is_firstuse) {
 		first_use();
 	} else {

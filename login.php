@@ -1,5 +1,6 @@
+
 <head>
-	<meta charset=utf8>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<style>
 		#main {
 			margin:0 auto;
@@ -31,7 +32,6 @@
 		}
 	</style>
 	<script src=jquery.js></script>
-	<script src=checkbrowser.js></script>
 	<script src=login.js></script>
 </head>
 
