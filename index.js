@@ -134,11 +134,11 @@ function todo_entry_set(j) {
 	titleright_btn = '<a href=# onclick="todo_title_btn_click(event)" >完成</a>';
 	var titleright = $('<div class=todo_title_right>').append(titleright_btn);
 	var tdtitle = $('<td>').append(titleleft).append(titleright);
-	if (j.del != '1') {
+	if (j.del != '1' && $.can_edit) {
 		tdtitle.hover(todo_entry_title_mouseover, todo_entry_title_mouseout); 
 	}
 	var tdstr = $('<td>').append(strnode).append(strbtn);
-	if (j.del != '1') {
+	if (j.del != '1' && $.can_edit) {
 		tdstr.hover(todo_entry_str_mouseover, todo_entry_str_mouseout);
 	}
 
