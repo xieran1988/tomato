@@ -153,19 +153,26 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 
 		.prize_list {
 			position: absolute; 
-			top: 50px;
-			left: 50px;
+			top: 60px;
+			left: 150px;
 			width: 600px;
 			height: 200px;
 			float: right;
 			z-index: -1;
 		}
+		.prize_list img {
+			opacity: 0.4;
+			filter: alpha(opacity=40);
+			height: 10px;
+		}
 		.prize_list p {
 			color: #aaa;
 			margin: 0;
+			font-size: 13px;
 		}
 		.prize_list h2 {
 			margin: 0;
+			font-size: 13px;
 		}
 
 	</style>
@@ -202,9 +209,9 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 	</div>
 
 	<div class=prize_list>
-		<h2> --- 成就列表 --- </h2>
+		<h2> 您今天获得的成就 </h2>
 		<? foreach ($p->r[prize] as $v) {	?>
-			<p><?= $v ?></p>
+			<p><img src=star.png /><?= $v ?></p>
 		<? } ?>
 	</div>
 
