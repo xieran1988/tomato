@@ -41,7 +41,6 @@ function post_alldata(act) {
 	};
 	var s = $.toJSON({"val":data, "act":act});
 	$.post("data.php?postdata=1", s, function (data) {
-		console.log(data);
 		d = jQuery.parseJSON(data);
 		if (d.new_prize) {
 			alert('获得新成就：\n' + d.new_prize);
