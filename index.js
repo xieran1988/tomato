@@ -123,12 +123,13 @@ function todo_entry_set(j) {
 		var ch = j.str.substr(i, 1);
 		strnode.append('<span class=todo_ch>' + ch + '</span>');
 	}
-	var strbtn = $('<div class=todo_str_right>');
+	var strbtn = '<div class=todo_str_right>';
 	if ($.can_edit) {
-		strbtn.append($('<a href=#>').html('*').click(todo_str_btn_click))
-		strbtn.append($('<a href=#>').html('-').click(todo_str_btn_click));
-		strbtn.append($('<a href=#>').html(',').click(todo_str_btn_click));
+		strbtn += '<a href=# onclick="todo_str_btn_click(event);">*</a>';
+		strbtn += '<a href=# onclick="todo_str_btn_click(event);">,</a>';
+		strbtn += '<a href=# onclick="todo_str_btn_click(event);">-</a>';
 	}
+	strbtn += '</div>';
 	var titleleft = $('<div class=todo_title_left>').html(strtitle);
 //	var titleright_btn = $('<a href=#>').html('完成').click(todo_title_btn_click);
 	titleright_btn = '<a href=# onclick="todo_title_btn_click(event)" >完成</a>';
@@ -155,11 +156,12 @@ function todo_entry_get(o) {
 	return {'title':title, 'str':str, 'del':del};
 }
 
-function todo_str_btn_click() {
-	var ch = $(this).html();
-	var span = $('<span class=todo_ch>').html(ch);
-	var l = $(this).parent().parent().find('.todo_str_left');
-	var tr = $(this).closest('tr');
+function todo_str_btn_click(e) {
+	var t = $(get_target(e));
+	var ch = t.html();
+	var span = '<span class=todo_ch>' + ch + '</span>';
+	var l = t.parent().parent().find('.todo_str_left');
+	var tr = t.closest('tr');
 	var str = tr.attr('str');
 	tr.attr('str', str + ch);
 	l.append(span);
@@ -276,7 +278,7 @@ function tip_div_close_click() {
 
 function first_use() {
 	todo_update([
-		{'title':'Task 1', 'str':'*,-'},
+		{'title':'Task 1', 'str':'*,-'}
 	]);
 	$('.nav').hide();
 	$('.tip_top').show();
@@ -310,13 +312,13 @@ function clock_timer() {
 
 function clock_click(e) {
 	if ($.clock_tm) {
-		if (confirm("放弃番茄？")) {
+		if (confirm("停止？")) {
 			$('.clock').html("秒表");
 			delete $.clock_tm;
 		}
 		return ;
 	}
-	$.clock_tm = (new Date()).getTime() + 1000*30;
+	$.clock_tm = (new Date()).getTime() + 1000*60*25;
 	clock_timer();
 }
 
