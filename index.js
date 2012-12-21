@@ -349,5 +349,7 @@ $(document).ready(function() {
 	} else {
 		update_alldata($.r.val);
 	}
+
+	$.placeholder();
 });
 

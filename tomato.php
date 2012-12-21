@@ -255,7 +255,9 @@ class Tomato {
 		$this->r[date] = $this->date;
 		$this->r[dateshort] = date("m-d", strtotime($this->date));
 		$this->r[dateprev] = date("Y-m-d", strtotime("$this->date -1 day"));
-		$this->r[datenext] = date("Y-m-d", strtotime("$p->date +1 day"));
+		$this->r[datenext] = date("Y-m-d", strtotime("$this->date +1 day"));
+		if ($this->r[datenext] > $this->r[today]) 
+			$this->r[datenext] = '#';
 		$this->r[is_today] = ($this->date == date("Y-m-d"));
 	}
 

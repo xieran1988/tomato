@@ -3,6 +3,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link href="index.css" rel="stylesheet" type="text/css"/>
 	<script src=jquery.js></script>
 	<script src=jquery.json-2.4.min.js></script>
 	<script src=index.js></script>
@@ -40,6 +41,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 		}
 	</style>
 	<script src=jquery.js></script>
+	<script src=plugin.js></script>
 	<script src=login.js></script>
 </head>
 

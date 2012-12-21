@@ -1,14 +1,5 @@
 
 $(document).ready(function() {
-	/*
-	$('[post]').each(function() {
-		$(this).click(function() {
-			var form = $(this).closest('form');
-			form.attr('action', $(this).attr('post'));
-			form.submit();
-		});
-	});
-	*/
 	$('input[type=text]').bind('keydown', function (e) {
 		if (e.keyCode == 13) {
 			$('form').attr('action', 'data.php?login=1');
@@ -16,5 +7,6 @@ $(document).ready(function() {
 			$('form').submit();
 		}
 	});
+	$.placeholder();
 });
 
