@@ -50,7 +50,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 			<a target=_blank href=about.html> 什么是番茄工作法？</a>
 		</div>
 		<div id=right >
-			<form method=post >
+			<form method=post name=f1 >
 				<input name=email type=text placeholder="邮箱"> </input>
 				<?
 					if ($_GET[email_used]) {
@@ -68,8 +68,8 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 					}
 				?>
 				<br>
-				<button post="data.php?reg=1">加入</button>
-				<button post="data.php?login=1">登录</button>
+				<button onclick="f1.action='data.php?reg=1'; f1.submit();">加入</button>
+				<button onclick="f1.action='data.php?login=1'; f1.submit();">登录</button>
 			</form>
 		</div>
 	</div>

@@ -29,19 +29,21 @@ class Tomato {
 			);
 
 		$rawpost = file_get_contents("php://input");
-		$_postjs = json_decode($rawpost, true);
+		$postjs = json_decode($rawpost, true);
 
-		$get = count($_GET) ? $_GET : array();
-		$post = count($_POST) ? $_POST : array();
-		$this->d = array_merge($get, $post, $myarg);
+		$this->d = $myarg;
 
 		if ($_COOKIE[email]) {
 			$this->d[email] = $_COOKIE[email];
+			$this->d[ck_email] = $_COOKIE[email];
 		}
 
-		foreach ($_postjs as $k=>$v) {
+		foreach ($_GET as $k=>$v) 
 			$this->d[$k] = $v;
-		}
+		foreach ($_POST as $k=>$v) 
+			$this->d[$k] = $v;
+		foreach ($postjs as $k=>$v) 
+			$this->d[$k] = $v;
 
 		foreach (array_slice($argv, 1) as $v) {
 			$a = explode("=", $v);
