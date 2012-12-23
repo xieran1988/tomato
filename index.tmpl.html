@@ -3,181 +3,10 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<style>
-
-		a {
-			color: #aaa;
-			text-decoration:none
-		}
-		a:hover {
-			background: yellow;
-		}
-		body,td,th {
-			font: 19px sans-serif;
-			color: #444;
-		}
-		.wrap {
-			width: 100%;
-			text-align:center;
-		}
-		.wrap .box {
-			width: 500px;
-			margin: 0 auto;
-			text-align:left;
-		}
-		th {
-			border-bottom: 1px solid #444;
-		}
-		td span {
-			margin-left: 10px;
-			line-height: 1.4em;
-		}
-		tr {
-		}
-		table {
-			margin-bottom: 50px;
-		}
-		.todo_left_selected {
-			background-color: #ddd;
-		}
-		.todo_thleft {
-			text-align: center;
-			width: 420px;
-		}
-		.todo_thright {
-			width: 420px;
-		}
-		strike { width: 3px; }
-		.todo_hold {
-			height: 60px; 
-		}
-		.todo_table tr > th:first-child {
-			border-right: 1px solid #444;
-		}
-		.todo_table tr > td:first-child {
-			border-right: 1px solid #444;
-		}
-		.todo_ch {
-		}
-		.todo_str_right a {
-			margin-left: 5px;
-			font-size: 30px;
-			background-color: #eee;
-			padding: 10px;
-		}
-		.todo_str_right a:hover {
-			background-color: #ddd;
-		}
-		.todo_title_left {
-			float: left;
-		}
-		.todo_title_right {
-			float: right;
-			display: none;
-			padding-right: 10px;
-		}
-		.todo_title_right button {
-			margin: 0;
-		}
-		.todo_str_left {
-			float: left;
-		}
-		.todo_str_left {
-		}
-		.todo_str_right {
-			float: right;
-			display: none;
-		}
-		.outplan_th {
-			text-align: center;
-			width: 500px;
-		}
-		.outplan_hold {
-			height: 60px; 
-		}
-		.alist_th {
-			text-align: center;
-			width: 500px;
-		}
-		.alist_hold {
-			height: 60px; 
-		}
-		.nav {
-			margin:0 auto;
-			height: 40px;
-			width: 500px;
-		}
-		.nav span {
-			float: right;
-			margin: 5px;
-		}
-		.tip_div { 
-			position: absolute; 
-			width: 600px;
-			height: 200px;
-			display: none;
-		}
-		.tip_div h1 {
-			margin: 0;
-			font-size: 20px;
-			font-weight: normal;
-		}
-		.tip_div h6 {
-			margin: 0;
-			margin-top: 10px;
-			font-size: 13px;
-			font-weight: normal;
-		}
-		.tip_div h2 {
-			margin: 0;
-			font-size: 15px;
-			font-weight: normal;
-		}
-		.tip_top {
-			margin:0 auto;
-			width: 400px;
-			font-size: 25px;
-			display: none;
-		}
-		.blank_entry {
-			display: none;
-		}
-
-		#todo_entry_title_menu {
-			display: none;
-		}
-
-		var {
-			display: none;
-		}
-
-		.prize_list {
-			position: absolute; 
-			top: 60px;
-			left: 150px;
-			width: 600px;
-			height: 200px;
-			float: right;
-			z-index: -1;
-		}
-		.prize_list img {
-			opacity: 0.4;
-			filter: alpha(opacity=40);
-			height: 10px;
-		}
-		.prize_list p {
-			color: #aaa;
-			margin: 0;
-			font-size: 13px;
-		}
-		.prize_list h2 {
-			margin: 0;
-			font-size: 13px;
-		}
-
-	</style>
+	<link href="index.css" rel="stylesheet" type="text/css"/>
 	<script src=jquery.js></script>
 	<script src=jquery.json-2.4.min.js></script>
+	<script src=plugin.js></script>
 	<script src=index.js></script>
 </head>
 
@@ -209,7 +38,9 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 	</div>
 
 	<div class=prize_list>
-		<h2> 您今天获得的成就 </h2>
+		<? if (count($p->r[prize])) { ?>
+			<h2> 您今天获得的成就 </h2>
+		<? } ?>
 		<? foreach ($p->r[prize] as $v) {	?>
 			<p><img src=star.png /><?= $v ?></p>
 		<? } ?>

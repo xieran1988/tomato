@@ -1,6 +1,12 @@
-
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link href="index.css" rel="stylesheet" type="text/css"/>
+	<script src=jquery.js></script>
+	<script src=jquery.json-2.4.min.js></script>
+	<script src=index.js></script>
 	<style>
 		#main {
 			margin:0 auto;
@@ -14,12 +20,15 @@
 			height: 100px;
 		}
 		#left h2 {
+			margin-top: 10px;
 			margin-bottom: 10px;
 		}
 		#left a {
 			color: #aaa;
 			font-size: 14px;
-			margin-left: 170px;
+		}
+		input {
+			width: 150px;
 		}
 		#right {
 			float: left;
@@ -32,6 +41,7 @@
 		}
 	</style>
 	<script src=jquery.js></script>
+	<script src=plugin.js></script>
 	<script src=login.js></script>
 </head>
 
@@ -42,7 +52,7 @@
 			<a target=_blank href=about.html> 什么是番茄工作法？</a>
 		</div>
 		<div id=right >
-			<form method=post >
+			<form method=post name=f1 >
 				<input name=email type=text placeholder="邮箱"> </input>
 				<?
 					if ($_GET[email_used]) {
@@ -60,8 +70,8 @@
 					}
 				?>
 				<br>
-				<button post="data.php?reg=1">加入</button>
-				<button post="data.php?login=1">登录</button>
+				<button onclick="f1.action='data.php?reg=1'; f1.submit();">加入</button>
+				<button onclick="f1.action='data.php?login=1'; f1.submit();">登录</button>
 			</form>
 		</div>
 	</div>
