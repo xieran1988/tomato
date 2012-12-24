@@ -222,9 +222,10 @@ class Tomato {
 							 				"on duplicate key update val = '%3'",
 							 				$this->d[email], $this->date, $val, $val
 						  				);
-		$r = $this->query("insert into log(email, time, act) ".
-							 				"values('%1', now(), '%2') ",
-							 				$this->d[email], $this->d[act]
+		$r = $this->query("insert into log(email, time, act, val) ".
+							 				"values('%1', now(), '%2', '%3') ",
+											$this->d[email], $this->d[act], 
+											base64_encode($this->d[title])
 						  				);
 		$this->check_prizes();
 		$this->r[ret] = 'ok';

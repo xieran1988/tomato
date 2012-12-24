@@ -31,7 +31,7 @@ function get_all_entries(entry, entry_get) {
 	});
 }
 
-function post_alldata(act) {
+function post_alldata(act, title) {
 	if ($.is_firstuse)
 		return ;
 	var data = {
@@ -39,7 +39,7 @@ function post_alldata(act) {
 		'outplan' : get_all_entries('.outplan_entry', outplan_entry_get),
 	 	'alist' : get_all_entries('.alist_entry', alist_entry_get)
 	};
-	var s = $.toJSON({"val":data, "act":act});
+	var s = $.toJSON({"val":data, "act":act, "title":title});
 	$.post("data.php?postdata=1", s, function (data) {
 		d = jQuery.parseJSON(data);
 		if (d.new_prize) {
@@ -98,11 +98,12 @@ function todo_title_btn_click(e) {
 	var t = $(get_target(e));
 	var l = t.closest('.todo_entry');
 	var l2 = l.find('.todo_title_left');
+	var title = l.attr('title');
 	l2.html('<strike>' + l2.html() + '</strike>');
 	l.attr('del', '1');
 	l.find('td').unbind('hover');
 	t.hide();
-	post_alldata('done');
+	post_alldata('done', title);
 }
 
 function todo_entry_set(j) {
@@ -161,10 +162,11 @@ function todo_str_btn_click(e) {
 	var span = '<span class=todo_ch>' + ch + '</span>';
 	var l = t.parent().parent().find('.todo_str_left');
 	var tr = t.closest('tr');
+	var title = tr.attr('title');
 	var str = tr.attr('str');
 	tr.attr('str', str + ch);
 	l.append(span);
-	post_alldata('add' + ch);
+	post_alldata('add' + ch, title);
 }
 
 function todo_update(j) {
@@ -223,7 +225,7 @@ function bind_key(blank, entry_set) {
 				ne.css('display', 'none');
 				ne.insertBefore($(blank));
 				ne.show();
-				post_alldata('new' + blank);
+				post_alldata('new' + blank, v);
 				$(this).val('');
 			}
 		}
