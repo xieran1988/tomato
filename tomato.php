@@ -114,15 +114,13 @@ class Tomato {
 		return $r;
 	}
 
-	function add_prize($s) {
+	function add_prize($s, $list) {
 		if (!in_array($s, $this->day_prize)) {
-			$this->log("add prize $s");
-			/*
+			$this->log("add prize $s $list");
 			$this->query("insert into log(email, time, act, val) ".
-									 "values('%1', 'now()', 'prize', '%2')",
-									 $this->d[email], $s
+									 "values('%1', now(), 'prize', '%2')",
+									 $this->d[email], "$s:$list"
 								 	);
-			 */
 			array_push($this->day_prize, $s);
 			array_push($this->new_prize, $this->prize_txts[$s]);
 		}
@@ -159,40 +157,42 @@ class Tomato {
 		}
 		 */
 
-		$fmt = "select count(*) as cnt, act, val from log ".
+		$fmt = "select count(*) as cnt, act, val, GROUP_CONCAT(id) as list from log ".
 					 "where email = '%1' and ".
 					 "date(time) = '%2' ".
 					 "group by val, act";
 		$r = $this->query($fmt, $this->d[email], $this->date);
 		$nr = 0;
+		$m16_list = array();
 		while ($r) {
 			if ($r[act] == "add," && $r[cnt] >= 6) 
-				$this->add_prize("break_6_in_a_tomato");
+				$this->add_prize("break_6_in_a_tomato", $r["list"]);
 			if ($r[act] == "add*" && $r[cnt] >= 6) 
-				$this->add_prize("more_than_6_in_a_tomato");
-			if ($r[act] == "add*")
+				$this->add_prize("more_than_6_in_a_tomato", $r["list"]);
+			if ($r[act] == "add*") {
 				$nr += $r[cnt];
+				array_push($m16_list, $r["list"]);
+			}
 			$r = mysql_fetch_assoc($this->sqlqry);
 		}
 		if ($nr >= 16)
-			$this->add_prize("more_than_16_tomato_a_day");
+			$this->add_prize("more_than_16_tomato_a_day", implode(",", $m16_list));
 
 		$r = $this->query("select * from log where email = '%1' and date(time) = '%2' ".
 											"order by time",
 											$this->d[email], $this->date
 										 );
 		$last_ts = strtotime($this->date);
-		$nr = 0;
+		$c8_list = array();
 		while ($r) {
 			if ($r[act] == "add*") {
 				$ts = strtotime($r["time"]);
-				if ($ts - $last_ts < 60*32) 
-					$nr++;
-				else
-					$nr = 1;
+				if ($ts - $last_ts > 60*32) 
+					$c8_list = array();
+				array_push($c8_list, $r[id]);
 				$last_ts = $ts;
-				if ($nr >= 8) 
-					$this->add_prize("cont_8_tomatos");
+				if (count($c8_list) >= 8) 
+					$this->add_prize("cont_8_tomatos", implode(",", $c8_list));
 			}
 			$r = mysql_fetch_assoc($this->sqlqry);
 		}
